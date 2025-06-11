@@ -41,7 +41,7 @@ export const useAppointments = (params?: {
   });
 
   return {
-    appointments: appointmentsQuery.data?.data || [],
+    appointments: appointmentsQuery.data?.appointments || [],
     pagination: appointmentsQuery.data?.pagination,
     isLoading: appointmentsQuery.isLoading,
     error: appointmentsQuery.error,

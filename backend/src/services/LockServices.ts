@@ -22,7 +22,7 @@ export const extendLock = async (appointmentId: string, userId: string): Promise
   await lockRepo.update(
     { appointmentId, userId },
     {
-      expiresAt: new Date(Date.now() + parseInt(LOCK_EXPIRY_MINUTES || '5') * 60 * 100),
+      expiresAt: new Date(Date.now() + parseInt(LOCK_EXPIRY_MINUTES || '5') * 60 * 1000),
       lastActivity: new Date(),
     }
   );
@@ -109,7 +109,7 @@ export const acquireLock = async (appointmentId: string, userId: string): Promis
         name: user.name,
         email: user.email,
       },
-      expiresAt: new Date(Date.now() + parseInt(LOCK_EXPIRY_MINUTES || '5') * 60 * 100),
+      expiresAt: new Date(Date.now() + parseInt(LOCK_EXPIRY_MINUTES || '5') * 60 * 1000),
       lastActivity: new Date(),
     });
 
@@ -188,7 +188,6 @@ export const updatePointerPositing = async (
   position: { x: number; y: number }
 ): Promise<void> => {
   if (!isUUID(appointmentId)) {
-    console.log(`Skipping pointer update for non-UUID appointmentId: ${appointmentId}`);
     return;
   }
 

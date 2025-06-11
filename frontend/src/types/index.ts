@@ -79,6 +79,7 @@ export interface ApiResponse<T = any> {
 export interface PaginatedResponse<T> {
   success: boolean;
   data: T[];
+  appointments: T[];
   pagination: {
     page: number;
     limit: number;

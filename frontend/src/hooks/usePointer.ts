@@ -58,17 +58,14 @@ export const usePointer = (appointmentId: string, isEnabled: boolean = true) => 
     const handlePointerUpdate = (position: any) => {
       try {
         if (!position || typeof position !== 'object') {
-          console.warn('Invalid pointer position received:', position);
           return;
         }
 
         if (!position.userId || position.appointmentId !== appointmentId) {
-          console.warn('Pointer update missing required fields or wrong appointment:', position);
           return;
         }
 
         if (!position.userInfo || !position.userInfo.name) {
-          console.warn('Pointer update missing userInfo:', position);
           return;
         }
 
