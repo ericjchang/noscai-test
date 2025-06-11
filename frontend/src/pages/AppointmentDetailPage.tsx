@@ -24,8 +24,17 @@ const AppointmentDetailPage: React.FC = () => {
   });
 
   const handleUpdateAppointment = async (data: any) => {
+    if (!appointment) {
+      return;
+    }
+
     try {
-      // Update appointment logic here
+      const updateData = {
+        ...data,
+        version: appointment.version,
+      };
+
+      await api.updateAppointment(appointment.id, updateData);
       await refetch();
       setIsEditing(false);
     } catch (error) {

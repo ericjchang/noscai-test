@@ -34,6 +34,8 @@ export const validateAppointmentUpdate = (req: Request, res: Response, next: Nex
     startTime: Joi.date().iso().optional(),
     endTime: Joi.date().iso().optional(),
     status: Joi.string().valid('scheduled', 'completed', 'cancelled').optional(),
+    patientId: Joi.string().uuid().optional(),
+    doctorId: Joi.string().uuid().optional(),
     version: Joi.number().integer().min(1).optional(),
   })
     .custom((val, helpers) => {
