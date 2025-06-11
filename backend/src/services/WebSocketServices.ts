@@ -148,8 +148,6 @@ const handlePointerUpdate = async (
     userInfo: socket.data.userInfo,
   };
 
-  console.log('Sending pointer update:', pointerUpdate);
-
   socket.to(appointmentId).emit('pointer_update', pointerUpdate);
 };
 
