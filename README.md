@@ -135,5 +135,6 @@ Frontend will run on: `http://localhost:3000`
 
 ### Show Current Editor, Lock Timer & Admin Request Control
 
-![](./Screenshot/Screenshot%20from%202025-06-11%2023-47-29.png)
 ![](./Screenshot/Screenshot%20from%202025-06-11%2023-47-34.png)
+![](./Screenshot/Screenshot%20from%202025-06-11%2023-47-29.png)
+![](./Screenshot/Screenshot%20from%202025-06-11%2023-58-09.png)
