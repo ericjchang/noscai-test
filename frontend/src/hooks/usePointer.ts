@@ -55,9 +55,37 @@ export const usePointer = (appointmentId: string, isEnabled: boolean = true) => 
   }, [handleMouseMove, isEnabled]);
 
   useEffect(() => {
-    const handlePointerUpdate = (position: PointerPosition) => {
-      if (position.appointmentId === appointmentId) {
-        updatePointer(position);
+    const handlePointerUpdate = (position: any) => {
+      try {
+        if (!position || typeof position !== 'object') {
+          console.warn('Invalid pointer position received:', position);
+          return;
+        }
+
+        if (!position.userId || position.appointmentId !== appointmentId) {
+          console.warn('Pointer update missing required fields or wrong appointment:', position);
+          return;
+        }
+
+        if (!position.userInfo || !position.userInfo.name) {
+          console.warn('Pointer update missing userInfo:', position);
+          return;
+        }
+
+        const validatedPosition: PointerPosition = {
+          x: position.x || 0,
+          y: position.y || 0,
+          userId: position.userId,
+          appointmentId: position.appointmentId,
+          userInfo: {
+            name: position.userInfo.name || 'Unknown User',
+            email: position.userInfo.email || 'unknown@example.com',
+          },
+        };
+
+        updatePointer(validatedPosition);
+      } catch (error) {
+        console.error('Error handling pointer update:', error, position);
       }
     };
 

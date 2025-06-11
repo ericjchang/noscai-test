@@ -28,14 +28,19 @@ const setupAuthentication = (io: Server): void => {
     try {
       const token = socket.handshake.auth.token;
       if (!token) {
-        return next(new Error('Authenticaion token required'));
+        return next(new Error('Authentication token required'));
       }
 
       const decoded = jwt.verify(token, process.env.JWT_SECRET!) as any;
       socket.data.userId = decoded.userId;
-      socket.data.userInfo = decoded.userInfo;
+      socket.data.userInfo = {
+        name: decoded.name || decoded.userInfo?.name || 'Unknown User',
+        email: decoded.email || decoded.userInfo?.email || 'unknown@example.com',
+      };
+
       next();
     } catch (err) {
+      console.error('WebSocket authentication error:', err);
       next(new Error('Invalid authentication token'));
     }
   });
@@ -130,11 +135,22 @@ const handlePointerUpdate = async (
 
   await LockService.updatePointerPositing(appointmentId, userId, position);
 
-  socket.to(appointmentId).emit('pointer_update', {
+  if (!socket.data.userInfo) {
+    console.error('handlePointerUpdate: socket.data.userInfo is undefined for user', userId);
+    return;
+  }
+
+  const pointerUpdate = {
     userId,
+    appointmentId,
+    x: position.x,
+    y: position.y,
     userInfo: socket.data.userInfo,
-    position,
-  });
+  };
+
+  console.log('Sending pointer update:', pointerUpdate);
+
+  socket.to(appointmentId).emit('pointer_update', pointerUpdate);
 };
 
 const handleDisconnection = async (socket: Socket, userId: string): Promise<void> => {
