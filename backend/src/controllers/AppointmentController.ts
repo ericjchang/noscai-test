@@ -3,6 +3,7 @@ import { Repository } from 'typeorm';
 import { AppDataSource } from '../utils/database';
 import { Appointment } from '../models/Appointment';
 import * as LockService from '../services/LockServices';
+import * as WebsocketService from '../services/WebSocketServices';
 
 const getAppointmentRepo = (): Repository<Appointment> => AppDataSource.getRepository(Appointment);
 
@@ -84,6 +85,13 @@ export const updateAppointment = async (req: Request, res: Response): Promise<vo
       version: appointment.version + 1,
       updatedAt: new Date(),
     });
+
+    const appointmentData = await appointmentRepo.findOne({
+      where: { id: appointmentId },
+      relations: ['patient', 'doctor'],
+    });
+
+    await WebsocketService.broadcastAppointmentUpdate(appointmentId, userId, appointmentData);
 
     res.json({
       success: true,

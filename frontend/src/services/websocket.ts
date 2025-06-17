@@ -84,6 +84,10 @@ class WebSocketService {
     this.socket.on('pointer_update', (position: PointerPosition) => {
       this.emit('pointer_update', position);
     });
+
+    this.socket.on('appointment_event', (message: WebSocketMessage) => {
+      this.emit('appointment_event', message);
+    });
   }
 
   on(event: string, handler: WebSocketEventHandler): void {

@@ -1,6 +1,11 @@
 import { Request, Response } from 'express';
+import { Repository } from 'typeorm';
+import { AppDataSource } from '../utils/database';
+import { User } from '../models/User';
 import * as LockService from '../services/LockServices';
 import * as WebSocketService from '../services/WebSocketServices';
+
+const getUserRepo = (): Repository<User> => AppDataSource.getRepository(User);
 
 export const getLockStatus = async (req: Request, res: Response): Promise<void> => {
   try {
@@ -67,10 +72,33 @@ export const forceLock = async (req: Request, res: Response): Promise<void> => {
     const { appointmentId } = req.params;
     const adminUserId = (req as any).user.userId;
 
+    const adminUser = await getUserRepo().findOne({ where: { id: adminUserId } });
+
+    const existingLockInfo = await LockService.getLockInfo(appointmentId);
+    const userId = existingLockInfo?.userId;
+
     const result = await LockService.forceLock(appointmentId, adminUserId);
 
-    if (result.success && result.lock) {
-      await WebSocketService.broadcastLockAcquired(appointmentId, result.lock);
+    if (result.success) {
+      if (userId && userId !== adminUserId && adminUserId) {
+        const forceTakeOverMessage = {
+          type: 'lock_force_taken',
+          appointmentId,
+          userId,
+          takenBy: adminUserId,
+          takenByInfo: {
+            name: adminUser?.name,
+            email: adminUser?.email,
+          },
+          data: null,
+        };
+        await WebSocketService.broadcastToAppointment(appointmentId, 'lock_event', forceTakeOverMessage);
+        await WebSocketService.broadcastToUser(userId, 'lock_event', forceTakeOverMessage);
+      }
+
+      if (result.lock) {
+        await WebSocketService.broadcastLockAcquired(appointmentId, result.lock);
+      }
     }
 
     res.json(result);

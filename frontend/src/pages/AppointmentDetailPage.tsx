@@ -2,13 +2,14 @@ import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ArrowLeftIcon, PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
-import { useAppointment } from '../hooks/useAppointments';
+import { useAppointment, useAppointments } from '../hooks/useAppointments';
 import { useQuery } from '@tanstack/react-query';
 import * as api from '../services/api';
 import AppointmentForm from '../components/appointment/AppointmentForm';
 import CollaborativeCursors from '../components/collaboration/CollaborativeCursor';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 import { formatDateTime, getStatusColor } from '../utils/helpers';
+import { useAppointmentSync } from '../hooks/useAppointmentSync';
 
 const AppointmentDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -16,6 +17,9 @@ const AppointmentDetailPage: React.FC = () => {
   const [isEditing, setIsEditing] = useState(false);
 
   const { appointment, lock, isLoading, error, refetch } = useAppointment(id!);
+  const { updateAppointment, isUpdating } = useAppointments();
+
+  useAppointmentSync(id);
 
   const { data: users = [] } = useQuery({
     queryKey: ['users'],
@@ -29,12 +33,15 @@ const AppointmentDetailPage: React.FC = () => {
     }
 
     try {
-      const updateData = {
-        ...data,
-        version: appointment.version,
-      };
+      await updateAppointment({
+        id: appointment.id,
+        data: {
+          ...data,
+          version: appointment.version,
+        },
+      });
 
-      await api.updateAppointment(appointment.id, updateData);
+      // await api.updateAppointment(appointment.id, updateData);
       await refetch();
       setIsEditing(false);
     } catch (error) {

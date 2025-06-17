@@ -242,6 +242,23 @@ export const broadcastToAppointment = async (appointmentId: string, event: strin
   ioInstance.to(appointmentId).emit(event, data);
 };
 
+export const broadcastAppointmentUpdate = async (
+  appointmentId: string,
+  updatedBy: string,
+  appoinmentData: any
+): Promise<void> => {
+  if (!ioInstance) return;
+
+  const message: WebSocketMessage = {
+    type: 'appointment_event',
+    appointmentId,
+    userId: updatedBy,
+    data: appoinmentData,
+  };
+
+  ioInstance.to(appointmentId).emit('appointment_event', message);
+};
+
 export const disconnectUser = async (userId: string, reason?: string): Promise<void> => {
   if (!ioInstance) return;
 

@@ -53,7 +53,13 @@ export interface LockResponse {
 }
 
 export interface WebSocketMessage {
-  type: 'lock_acquired' | 'lock_released' | 'pointer_update' | 'lock_expired';
+  type:
+    | 'lock_acquired'
+    | 'lock_released'
+    | 'pointer_update'
+    | 'lock_expired'
+    | 'lock_force_taken'
+    | 'appointment_event';
   appointmentId: string;
   userId?: string;
   data?: any;

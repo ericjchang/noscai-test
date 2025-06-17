@@ -125,6 +125,15 @@ export const useLock = (appointmentId: string) => {
           clearLock(appointmentId);
           stopHeartbeat();
           break;
+
+        case 'lock_force_taken':
+          if (message.userId === user?.userId) {
+            clearLock(appointmentId);
+            stopHeartbeat();
+          } else {
+            clearLock(appointmentId);
+          }
+          break;
       }
     };
 
