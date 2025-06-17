@@ -6,6 +6,7 @@ import { Appointment, AppointmentFormData, AppointmentStatus, User } from '../..
 import { useLock } from '../../hooks/useLock';
 import LockIndicator from '../lock/LockIndicator';
 import LockControls from '../lock/LockControls';
+import { formatDateTimeLocal, convertLocalToUTC } from '../../utils/helpers';
 
 interface AppointmentFormProps {
   appointment?: Appointment;
@@ -39,8 +40,8 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({
       ? {
           title: appointment.title,
           description: appointment.description || '',
-          startTime: new Date(appointment.startTime).toISOString().slice(0, 16),
-          endTime: new Date(appointment.endTime).toISOString().slice(0, 16),
+          startTime: formatDateTimeLocal(appointment.startTime),
+          endTime: formatDateTimeLocal(appointment.endTime),
           status: appointment.status,
           patientId: appointment.patientId,
           doctorId: appointment.doctorId,
@@ -61,8 +62,8 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({
       reset({
         title: appointment.title,
         description: appointment.description || '',
-        startTime: new Date(appointment.startTime).toISOString().slice(0, 16),
-        endTime: new Date(appointment.endTime).toISOString().slice(0, 16),
+        startTime: formatDateTimeLocal(appointment.startTime),
+        endTime: formatDateTimeLocal(appointment.endTime),
         status: appointment.status,
         patientId: appointment.patientId,
         doctorId: appointment.doctorId,
@@ -73,8 +74,8 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({
   const handleFormSubmit = (data: AppointmentFormData) => {
     const submitData: AppointmentFormData & { version?: number } = {
       ...data,
-      startTime: new Date(data.startTime).toISOString(),
-      endTime: new Date(data.endTime).toISOString(),
+      startTime: convertLocalToUTC(data.startTime),
+      endTime: convertLocalToUTC(data.endTime),
     };
 
     if (appointment) {
