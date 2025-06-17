@@ -2,6 +2,14 @@
 
 A comprehensive appointment management system with real-time collaborative editing, locking mechanisms, and animated cursors to prevent concurrent edits and data conflicts.
 
+---
+
+## Time Fixes
+
+![](./Screenshot/fixed_time.gif)
+
+---
+
 ## Quick Start
 
 ### 1. Clone Repository
